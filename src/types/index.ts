@@ -8,7 +8,6 @@ export interface Project {
   slug: string;
   title: string;
   address: string;
-  summary: string;
   description: string;
   status: "completed" | "in-progress" | "upcoming";
   year: number;
