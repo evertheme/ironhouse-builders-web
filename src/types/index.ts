@@ -1,17 +1,12 @@
-export type ProjectImage = {
-  src: string;
-  alt: string;
-};
-
 export interface Project {
-  id: string;
+  id: number;
   slug: string;
   title: string;
   address: string;
   description: string;
   status: "completed" | "in-progress" | "upcoming";
   year: number;
-  images: ProjectImage[];
+  images: string[];
   thumbnail: string;
   features: string[];
   specs: {

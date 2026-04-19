@@ -1,21 +1,4 @@
-export interface Project {
-  id: number;
-  title: string;
-  slug: string;
-  address: string;
-  description: string;
-  thumbnail: string;
-  images: string[];
-  year: number;
-  status: "completed" | "in-progress";
-  specs: {
-    bedrooms?: number;
-    bathrooms?: number;
-    sqft?: number;
-    lotSize?: string;
-  };
-  features: string[];
-}
+import type { Project } from "@/types";
 
 const projects: Project[] = [
   {
