@@ -62,7 +62,12 @@ export default async function ProjectPage({
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <ProjectGallery images={project.images} title={project.title} />
+          <ProjectGallery
+            images={
+              project.images.length > 0 ? project.images : [project.thumbnail]
+            }
+            title={project.title}
+          />
         </div>
       </section>
 

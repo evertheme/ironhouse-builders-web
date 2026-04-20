@@ -1,6 +1,8 @@
 import type { AdminProjectsBootstrap } from "@/lib/projects";
 
 const MIGRATION_FILE = "supabase/migrations/20250419120000_projects.sql";
+const STORAGE_MIGRATION_FILE =
+  "supabase/migrations/20250419200000_project_images_storage.sql";
 
 export default function ProjectsDbNotice({
   bootstrap,
@@ -54,6 +56,12 @@ export default function ProjectsDbNotice({
             </code>
           </li>
         </ol>
+        <p className="text-sm text-red-900/90 mb-2">
+          For <strong>image uploads</strong>, also run{" "}
+          <code className="text-xs bg-white/70 px-1 rounded">{STORAGE_MIGRATION_FILE}</code>{" "}
+          in the same SQL editor (creates the <code className="text-xs bg-white/70 px-1 rounded">project-images</code>{" "}
+          storage bucket and policies).
+        </p>
         <p className="text-xs text-red-900/80 font-mono break-all">
           {bootstrap.message}
         </p>

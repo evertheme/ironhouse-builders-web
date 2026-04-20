@@ -9,14 +9,24 @@ interface ProjectGalleryProps {
 }
 
 export default function ProjectGallery({ images, title }: ProjectGalleryProps) {
+  const list = images.filter(Boolean);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  if (list.length === 0) {
+    return (
+      <p className="text-center text-slate-500 py-12">No gallery images yet.</p>
+    );
+  }
+
+  const safeIndex = Math.min(selectedImage, list.length - 1);
+  const mainSrc = list[safeIndex];
 
   return (
     <div className="space-y-4">
       <div className="relative aspect-[16/9] rounded-lg overflow-hidden">
         <Image
-          src={images[selectedImage]}
-          alt={`${title} - Image ${selectedImage + 1}`}
+          src={mainSrc}
+          alt={`${title} - Image ${safeIndex + 1}`}
           fill
           className="object-cover"
           priority
@@ -24,12 +34,13 @@ export default function ProjectGallery({ images, title }: ProjectGalleryProps) {
       </div>
 
       <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
-        {images.map((image, index) => (
+        {list.map((image, index) => (
           <button
-            key={index}
+            key={`${image}-${index}`}
+            type="button"
             onClick={() => setSelectedImage(index)}
             className={`relative aspect-square rounded-lg overflow-hidden ${
-              selectedImage === index ? "ring-4 ring-blue-500" : ""
+              safeIndex === index ? "ring-4 ring-blue-500" : ""
             }`}
           >
             <Image

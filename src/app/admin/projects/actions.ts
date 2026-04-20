@@ -1,6 +1,10 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import {
+  PROJECT_IMAGES_BUCKET,
+  sanitizeSlugForStorage,
+} from "@/lib/supabase/project-images";
 import { SEED_PROJECTS } from "@/lib/project-seed-data";
 import { getAllProjectRows } from "@/lib/projects-db";
 import type { Project } from "@/types";
@@ -60,7 +64,10 @@ function parseFormToPayload(
     throw new Error("Invalid status.");
   }
 
-  const images = lines(String(formData.get("images_text") ?? ""));
+  let images = lines(String(formData.get("images_text") ?? ""));
+  if (images.length === 0 && thumbnail) {
+    images = [thumbnail];
+  }
   const features = lines(String(formData.get("features_text") ?? ""));
 
   const bedroomsRaw = String(formData.get("bedrooms") ?? "").trim();
@@ -230,4 +237,58 @@ export async function reorderProjects(orderedIds: string[]) {
 
   revalidateProjectPaths();
   revalidatePath("/admin/projects");
+}
+
+const MAX_PROJECT_IMAGE_BYTES = 5 * 1024 * 1024;
+
+export async function uploadProjectImage(
+  formData: FormData,
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const { supabase } = await requireUser();
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "No file provided." };
+  }
+  if (file.size > MAX_PROJECT_IMAGE_BYTES) {
+    return { ok: false, error: "Image must be 5MB or smaller." };
+  }
+
+  const rawSlug = String(formData.get("slug") ?? "");
+  const prefix = sanitizeSlugForStorage(rawSlug);
+
+  const ext = (file.name.split(".").pop() || "bin").toLowerCase();
+  const safeExt = /^[a-z0-9]{1,8}$/.test(ext) ? ext : "bin";
+  const objectName = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${safeExt}`;
+  const path = `${prefix}/${objectName}`;
+
+  try {
+    const { error } = await supabase.storage
+      .from(PROJECT_IMAGES_BUCKET)
+      .upload(path, file, {
+        contentType: file.type || "application/octet-stream",
+        upsert: false,
+      });
+
+    if (error) {
+      return { ok: false, error: error.message };
+    }
+
+    const { data } = supabase.storage
+      .from(PROJECT_IMAGES_BUCKET)
+      .getPublicUrl(path);
+
+    if (!data.publicUrl) {
+      return {
+        ok: false,
+        error: "Upload succeeded but public URL was not returned.",
+      };
+    }
+
+    return { ok: true, url: data.publicUrl };
+  } catch (e) {
+    const message =
+      e instanceof Error ? e.message : "Unexpected error during upload.";
+    return { ok: false, error: message };
+  }
 }
