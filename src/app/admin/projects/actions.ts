@@ -208,38 +208,26 @@ export async function seedDefaultProjects(formData: FormData) {
   redirect("/admin/projects");
 }
 
-export async function moveProject(formData: FormData) {
-  const id = String(formData.get("id") ?? "").trim();
-  const direction = String(formData.get("direction") ?? "").trim();
-  if (!id || (direction !== "up" && direction !== "down")) {
+export async function reorderProjects(orderedIds: string[]) {
+  const { supabase } = await requireUser();
+  if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
     return;
   }
 
-  const { supabase } = await requireUser();
-  const rows = await getAllProjectRows();
-  const idx = rows.findIndex((r) => r.id === id);
-  if (idx < 0) return;
-  const j = direction === "up" ? idx - 1 : idx + 1;
-  if (j < 0 || j >= rows.length) return;
-
-  const a = rows[idx];
-  const b = rows[j];
-  const orderA = a.sort_order;
-  const orderB = b.sort_order;
-
-  const { error: e1 } = await supabase
-    .from("projects")
-    .update({ sort_order: orderB })
-    .eq("id", a.id);
-  if (e1) throw new Error(e1.message);
-
-  const { error: e2 } = await supabase
-    .from("projects")
-    .update({ sort_order: orderA })
-    .eq("id", b.id);
-  if (e2) throw new Error(e2.message);
+  for (let i = 0; i < orderedIds.length; i++) {
+    const id = orderedIds[i]?.trim();
+    if (!id) {
+      throw new Error("Invalid project id in reorder list.");
+    }
+    const { error } = await supabase
+      .from("projects")
+      .update({ sort_order: i })
+      .eq("id", id);
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
 
   revalidateProjectPaths();
   revalidatePath("/admin/projects");
-  redirect("/admin/projects");
 }
