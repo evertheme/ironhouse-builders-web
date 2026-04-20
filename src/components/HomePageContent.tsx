@@ -4,11 +4,9 @@ import Hero from "@/components/Hero";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import ProjectCard from "@/components/ProjectCard";
-import { getAllProjects } from "@/lib/projects";
+import type { Project } from "@/types";
 
-export default function HomePage() {
-  const projects = getAllProjects().slice(0, 3); // Show only 3 recent projects
-
+export default function HomePageContent({ projects }: { projects: Project[] }) {
   return (
     <>
       <Hero
@@ -16,7 +14,6 @@ export default function HomePage() {
         subtitle="Quality craftsmanship and exceptional design"
       />
 
-      {/* About Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
@@ -37,14 +34,13 @@ export default function HomePage() {
             >
               We specialize in building exceptional custom homes that combine
               modern design with timeless craftsmanship. Each project is
-              tailored to our clients' unique vision, ensuring every detail
+              tailored to our clients&apos; unique vision, ensuring every detail
               exceeds expectations.
             </motion.p>
           </div>
         </div>
       </section>
 
-      {/* Featured Projects */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -69,14 +65,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gray-900 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-6">
             Ready to Build Your Dream Home?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Let's discuss your vision and bring it to life with our expert team.
+            Let&apos;s discuss your vision and bring it to life with our expert
+            team.
           </p>
           <Link
             href="/contact"

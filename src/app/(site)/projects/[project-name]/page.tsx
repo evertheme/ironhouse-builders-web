@@ -1,29 +1,39 @@
 import { notFound } from "next/navigation";
-import { getProjectBySlug, getAllProjects } from "@/lib/projects";
+import { getProjectBySlug, getAllProjectSlugs } from "@/lib/projects";
 import ProjectGallery from "@/components/ProjectGallery";
 import Link from "next/link";
 
+export const dynamicParams = true;
+export const revalidate = 60;
+
 export async function generateStaticParams() {
-  const projects = getAllProjects();
-  return projects.map((project) => ({
-    "project-name": project.slug,
+  const slugs = await getAllProjectSlugs();
+  return slugs.map((slug) => ({
+    "project-name": slug,
   }));
 }
 
-export default function ProjectPage({
+export default async function ProjectPage({
   params,
 }: {
-  params: { "project-name": string };
+  params: Promise<{ "project-name": string }>;
 }) {
-  const project = getProjectBySlug(params["project-name"]);
+  const { "project-name": slug } = await params;
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     notFound();
   }
 
+  const statusClass =
+    project.status === "completed"
+      ? "text-green-600"
+      : project.status === "upcoming"
+        ? "text-amber-600"
+        : "text-blue-600";
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Header Section */}
       <div className="bg-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
           <Link
@@ -50,18 +60,15 @@ export default function ProjectPage({
         </div>
       </div>
 
-      {/* Gallery Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <ProjectGallery images={project.images} title={project.title} />
         </div>
       </section>
 
-      {/* Details Section */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Description */}
             <div className="lg:col-span-2">
               <h2 className="text-3xl font-bold mb-6">About This Project</h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
@@ -91,12 +98,11 @@ export default function ProjectPage({
               </ul>
             </div>
 
-            {/* Specifications */}
             <div>
               <div className="bg-white rounded-lg shadow-lg p-8 sticky top-24">
                 <h3 className="text-2xl font-bold mb-6">Specifications</h3>
                 <div className="space-y-4">
-                  {project.specs.bedrooms && (
+                  {project.specs.bedrooms !== undefined && (
                     <div className="flex justify-between items-center border-b border-gray-200 pb-3">
                       <span className="text-gray-600 font-medium">
                         Bedrooms
@@ -106,7 +112,7 @@ export default function ProjectPage({
                       </span>
                     </div>
                   )}
-                  {project.specs.bathrooms && (
+                  {project.specs.bathrooms !== undefined && (
                     <div className="flex justify-between items-center border-b border-gray-200 pb-3">
                       <span className="text-gray-600 font-medium">
                         Bathrooms
@@ -144,13 +150,7 @@ export default function ProjectPage({
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 font-medium">Status</span>
-                    <span
-                      className={`font-semibold capitalize ${
-                        project.status === "completed"
-                          ? "text-green-600"
-                          : "text-blue-600"
-                      }`}
-                    >
+                    <span className={`font-semibold capitalize ${statusClass}`}>
                       {project.status.replace("-", " ")}
                     </span>
                   </div>

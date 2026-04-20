@@ -2,11 +2,14 @@
 
 import Hero from "@/components/Hero";
 import ProjectCard from "@/components/ProjectCard";
-import { getAllProjects } from "@/lib/projects";
+import type { Project } from "@/types";
 import { useState } from "react";
 
-export default function ProjectsPage() {
-  const allProjects = getAllProjects();
+export default function ProjectsPageClient({
+  allProjects,
+}: {
+  allProjects: Project[];
+}) {
   const [filter, setFilter] = useState<"all" | "completed" | "in-progress">(
     "all",
   );
@@ -26,9 +29,9 @@ export default function ProjectsPage() {
 
       <section className="py-20">
         <div className="container mx-auto px-4">
-          {/* Filter Buttons */}
           <div className="flex justify-center gap-4 mb-12 flex-wrap">
             <button
+              type="button"
               onClick={() => setFilter("all")}
               className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                 filter === "all"
@@ -39,6 +42,7 @@ export default function ProjectsPage() {
               All Projects
             </button>
             <button
+              type="button"
               onClick={() => setFilter("completed")}
               className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                 filter === "completed"
@@ -49,6 +53,7 @@ export default function ProjectsPage() {
               Completed
             </button>
             <button
+              type="button"
               onClick={() => setFilter("in-progress")}
               className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                 filter === "in-progress"
@@ -60,7 +65,6 @@ export default function ProjectsPage() {
             </button>
           </div>
 
-          {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />
