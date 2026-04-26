@@ -1,6 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import {
+  formatUsPhoneMask,
+  usPhoneDigitsOnly,
+} from "@/lib/us-phone";
+import { useEffect, useState } from "react";
+
+const CONTACT_SUBMISSIONS_SESSION_KEY = "ihb_contact_submissions_count";
+const MAX_CONTACT_SUBMISSIONS_PER_SESSION = 2;
+
+function readSubmissionCountFromSession(): number {
+  if (typeof window === "undefined") return 0;
+  const raw = sessionStorage.getItem(CONTACT_SUBMISSIONS_SESSION_KEY);
+  const n = raw ? Number.parseInt(raw, 10) : 0;
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function persistSubmissionCount(count: number) {
+  sessionStorage.setItem(CONTACT_SUBMISSIONS_SESSION_KEY, String(count));
+}
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -13,9 +31,32 @@ export default function ContactForm() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [sessionSubmissionCount, setSessionSubmissionCount] = useState(0);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    setSessionSubmissionCount(readSubmissionCountFromSession());
+    setSessionReady(true);
+  }, []);
+
+  const submissionsRemaining = Math.max(
+    0,
+    MAX_CONTACT_SUBMISSIONS_PER_SESSION - sessionSubmissionCount,
+  );
+  const atSessionLimit =
+    sessionReady && sessionSubmissionCount >= MAX_CONTACT_SUBMISSIONS_PER_SESSION;
+  const formDisabled = !sessionReady || atSessionLimit || isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!sessionReady) return;
+
+    const used = readSubmissionCountFromSession();
+    if (used >= MAX_CONTACT_SUBMISSIONS_PER_SESSION) {
+      setSessionSubmissionCount(used);
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
@@ -26,7 +67,10 @@ export default function ContactForm() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          phone: formData.phone || null,
+          phone:
+            formData.phone.length > 0
+              ? formatUsPhoneMask(formData.phone)
+              : null,
           message: formData.message,
         }),
       });
@@ -35,6 +79,10 @@ export default function ContactForm() {
         setSubmitStatus("error");
         return;
       }
+
+      const nextCount = used + 1;
+      persistSubmissionCount(nextCount);
+      setSessionSubmissionCount(nextCount);
 
       setSubmitStatus("success");
       setFormData({ name: "", email: "", phone: "", message: "" });
@@ -55,8 +103,23 @@ export default function ContactForm() {
     });
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const next = usPhoneDigitsOnly(e.target.value);
+    setFormData({
+      ...formData,
+      phone: next,
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {atSessionLimit ? (
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-sm">
+          You&apos;ve reached the limit of {MAX_CONTACT_SUBMISSIONS_PER_SESSION}{" "}
+          messages.
+        </div>
+      ) : null}
+
       <div>
         <label
           htmlFor="name"
@@ -69,9 +132,10 @@ export default function ContactForm() {
           id="name"
           name="name"
           required
+          disabled={formDisabled}
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -87,9 +151,10 @@ export default function ContactForm() {
           id="email"
           name="email"
           required
+          disabled={formDisabled}
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -104,9 +169,13 @@ export default function ContactForm() {
           type="tel"
           id="phone"
           name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition"
+          inputMode="numeric"
+          autoComplete="tel-national"
+          placeholder="(555) 555-5555"
+          disabled={formDisabled}
+          value={formatUsPhoneMask(formData.phone)}
+          onChange={handlePhoneChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -122,9 +191,10 @@ export default function ContactForm() {
           name="message"
           required
           rows={6}
+          disabled={formDisabled}
           value={formData.message}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition resize-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -142,10 +212,14 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        disabled={isSubmitting}
-        className="btn-primary w-full py-3 px-6"
+        disabled={formDisabled}
+        className="btn-primary w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isSubmitting ? "Sending..." : "Send Message"}
+        {isSubmitting
+          ? "Sending..."
+          : atSessionLimit
+            ? "Send Message"
+            : "Send Message"}
       </button>
     </form>
   );

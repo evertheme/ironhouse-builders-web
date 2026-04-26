@@ -1,6 +1,7 @@
 import { collectContactNotificationRecipients } from "@/lib/contact-notification-recipients";
 import { sendContactNotification } from "@/lib/contact-notifications";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { normalizeUsPhoneForStorage } from "@/lib/us-phone";
 
 const MAX_NAME = 200;
 const MAX_EMAIL = 320;
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
   const name = String(b.name ?? "").trim();
   const email = String(b.email ?? "").trim();
   const phoneRaw = b.phone != null && b.phone !== "" ? String(b.phone).trim() : "";
-  const phone = phoneRaw || null;
+  const phone = normalizeUsPhoneForStorage(phoneRaw);
   const message = String(b.message ?? "").trim();
 
   if (!name || !email || !message) {

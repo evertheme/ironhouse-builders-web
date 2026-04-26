@@ -7,6 +7,7 @@ import {
   setContactMessageArchived,
 } from "./actions";
 import type { ContactMessage } from "@/types";
+import { usPhoneTelHref } from "@/lib/us-phone";
 
 function formatDate(iso: string) {
   try {
@@ -17,6 +18,18 @@ function formatDate(iso: string) {
   } catch {
     return iso;
   }
+}
+
+function AdminPhoneDisplay({ phone }: { phone: string }) {
+  const tel = usPhoneTelHref(phone);
+  if (tel) {
+    return (
+      <a href={tel} className="text-blue-600 hover:underline text-slate-800">
+        {phone}
+      </a>
+    );
+  }
+  return <span className="text-slate-600">{phone}</span>;
 }
 
 export default function ContactMessagesTable({ rows }: { rows: ContactMessage[] }) {
@@ -70,7 +83,9 @@ export default function ContactMessagesTable({ rows }: { rows: ContactMessage[] 
                     </a>
                   </div>
                   {row.phone ? (
-                    <div className="mt-1 text-slate-600">{row.phone}</div>
+                    <div className="mt-1">
+                      <AdminPhoneDisplay phone={row.phone} />
+                    </div>
                   ) : null}
                 </td>
                 <td className="px-4 py-3 align-top text-slate-800 max-w-md">

@@ -1,3 +1,4 @@
+import { usPhoneTelHref } from "@/lib/us-phone";
 import { Resend } from "resend";
 
 function escapeHtml(text: string): string {
@@ -39,13 +40,20 @@ export async function sendContactNotification(params: {
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safePhone = phone ? escapeHtml(phone) : "";
+  const phoneTel = phone ? usPhoneTelHref(phone) : null;
+  const phoneHtml =
+    phone && phoneTel
+      ? `<strong>Phone:</strong> <a href="${phoneTel}">${safePhone}</a>`
+      : phone
+        ? `<strong>Phone:</strong> ${safePhone}`
+        : "";
   const safeMessage = escapeHtml(message).replace(/\r\n/g, "\n").replace(/\n/g, "<br/>");
 
   const html = `
-    <p><strong>New contact form submission</strong></p>
+    <p><strong>NEW CONTACT:</strong></p>
     <p><strong>Name:</strong> ${safeName}<br/>
     <strong>Email:</strong> ${safeEmail}<br/>
-    ${phone ? `<strong>Phone:</strong> ${safePhone}<br/>` : ""}
+    ${phoneHtml ? `${phoneHtml}<br/>` : ""}
     </p>
     <p><strong>Message:</strong></p>
     <p>${safeMessage}</p>
