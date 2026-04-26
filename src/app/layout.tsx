@@ -12,7 +12,7 @@ const cardo = Cardo({
 });
 
 export const metadata: Metadata = {
-  title: "Iron House Builders - Quality Home Builders",
+  title: "IronHouse Builders",
   description:
     "Building exceptional homes with quality craftsmanship and attention to detail.",
 };
