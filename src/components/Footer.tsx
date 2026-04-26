@@ -1,58 +1,30 @@
-import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-12">
+    <footer className="bg-brand-dark text-white py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Iron House Builders</h3>
-            <p className="text-gray-400">
+            <div className="mb-4">
+              <BrandLogo variant="footer" />
+            </div>
+            <p className="text-white/70">
               Building exceptional homes with quality craftsmanship and
               attention to detail.
             </p>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/projects"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Projects
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-2 text-white/70">
               <li>Email: info@ironhousebuilders.com</li>
               <li>Phone: (555) 123-4567</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-xs">
+        <div className="border-t border-white/10 mt-8 pt-8 text-center text-white/60 text-xs">
           <p>
             © {new Date().getFullYear()} Iron House Builders. All rights
             reserved.

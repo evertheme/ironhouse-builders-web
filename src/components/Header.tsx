@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import BrandLogo from "@/components/BrandLogo";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
@@ -14,12 +15,10 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-brand-dark shadow-sm">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-gray-900">
-            Iron House Builders
-          </Link>
+          <BrandLogo variant="header" priority />
 
           {/* Desktop Navigation */}
           <ul className="hidden md:flex items-center gap-8">
@@ -27,7 +26,7 @@ export default function Header() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+                  className="text-white/80 hover:text-white transition-colors font-medium"
                 >
                   {item.label}
                 </Link>
@@ -38,7 +37,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2"
+            className="md:hidden p-2 text-white"
             aria-label="Toggle menu"
           >
             <svg
@@ -72,7 +71,7 @@ export default function Header() {
                 <Link
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium block"
+                  className="text-white/80 hover:text-white transition-colors font-medium block"
                 >
                   {item.label}
                 </Link>

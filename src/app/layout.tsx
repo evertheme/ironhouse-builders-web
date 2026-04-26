@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Cardo, Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const cardo = Cardo({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-cardo",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Iron House Builders - Quality Home Builders",
@@ -16,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={cardo.variable}>
       <body className={inter.className}>{children}</body>
     </html>
   );
