@@ -53,8 +53,8 @@ export default function HomePageContent({ projects }: { projects: Project[] }) {
 
           <div className='text-center'>
             <Link
-              href='/projects'
-              className='inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors'
+              href="/projects"
+              className="btn-primary inline-block py-3 px-8"
             >
               View All Projects
             </Link>
@@ -70,8 +70,8 @@ export default function HomePageContent({ projects }: { projects: Project[] }) {
             team.
           </p>
           <Link
-            href='/contact'
-            className='inline-block bg-white text-gray-900 hover:bg-white/90 font-semibold py-3 px-8 rounded-lg transition-colors shadow-sm'
+            href="/contact"
+            className="btn-primary inline-block py-3 px-8"
           >
             Get In Touch
           </Link>

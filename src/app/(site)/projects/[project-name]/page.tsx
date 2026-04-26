@@ -164,7 +164,7 @@ export default async function ProjectPage({
                 <div className="mt-8">
                   <Link
                     href="/contact"
-                    className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-3 px-6 rounded-lg transition-colors"
+                    className="btn-primary block w-full text-center py-3 px-6"
                   >
                     Inquire About This Project
                   </Link>

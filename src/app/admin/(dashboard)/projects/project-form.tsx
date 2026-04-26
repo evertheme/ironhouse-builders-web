@@ -306,7 +306,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
         <button
           type="submit"
           disabled={pending || uploadBusy}
-          className="rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold px-6 py-2.5"
+          className="btn-primary px-6 py-2.5"
         >
           {pending ? "Saving…" : isEdit ? "Save changes" : "Create project"}
         </button>

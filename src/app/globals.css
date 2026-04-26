@@ -30,4 +30,24 @@ body {
 h1,
 h2 {
   font-family: var(--font-cardo), ui-serif, Georgia, "Times New Roman", serif;
+  text-transform: uppercase;
+}
+
+/* Primary actions: #1b3e51 on light UI; #ad9d52 on dark backdrops (header/footer, hero overlays, etc.) */
+@layer components {
+  .btn-primary {
+    @apply font-semibold rounded-lg transition-colors;
+    @apply bg-brand-dark text-white;
+    @apply hover:brightness-110;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary-on-dark {
+    @apply font-semibold rounded-lg transition-colors;
+    @apply bg-brand-accent text-gray-900;
+    @apply hover:brightness-95;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700/50;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
 }

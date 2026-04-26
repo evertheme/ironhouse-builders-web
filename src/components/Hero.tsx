@@ -3,13 +3,17 @@
 import { motion } from 'framer-motion';
 
 interface HeroProps {
+  title?: string;
+  subtitle?: string;
   backgroundImage?: string;
-  height?: 'small' | 'medium' | 'large';
+  height?: "small" | "medium" | "large";
 }
 
 export default function Hero({
-  backgroundImage = '/images/hero-bg.jpg',
-  height = 'large',
+  title,
+  subtitle = "Quality craftsmanship and exceptional design",
+  backgroundImage = "/images/hero-bg.jpg",
+  height = "large",
 }: HeroProps) {
   const heightClasses = {
     small: 'h-[40vh]',
@@ -33,19 +37,25 @@ export default function Hero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className='text-4xl md:text-6xl lg:text-7xl font-bold mb-4'
+          className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4"
         >
-          BUILDING DREAMS,
-          <br />
-          CREATING HOMES
+          {title ? (
+            title
+          ) : (
+            <>
+              BUILDING DREAMS,
+              <br />
+              CREATING HOMES
+            </>
+          )}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className='text-xl md:text-2xl text-gray-200'
+          className="text-xl md:text-2xl text-gray-200"
         >
-          Quality craftsmanship and exceptional design
+          {subtitle}
         </motion.p>
       </div>
     </div>

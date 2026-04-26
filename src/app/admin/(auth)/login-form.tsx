@@ -93,7 +93,7 @@ export default function AdminLoginForm({ supabaseUrl, supabaseAnonKey }: Props) 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-2.5 transition-colors"
+          className="btn-primary w-full py-2.5"
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>

@@ -33,33 +33,33 @@ export default function ProjectsPageClient({
             <button
               type="button"
               onClick={() => setFilter("all")}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              className={
                 filter === "all"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                  ? "btn-primary px-6 py-2"
+                  : "rounded-lg bg-gray-200 px-6 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-300"
+              }
             >
               All Projects
             </button>
             <button
               type="button"
               onClick={() => setFilter("completed")}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              className={
                 filter === "completed"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                  ? "btn-primary px-6 py-2"
+                  : "rounded-lg bg-gray-200 px-6 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-300"
+              }
             >
               Completed
             </button>
             <button
               type="button"
               onClick={() => setFilter("in-progress")}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              className={
                 filter === "in-progress"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                  ? "btn-primary px-6 py-2"
+                  : "rounded-lg bg-gray-200 px-6 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-300"
+              }
             >
               In Progress
             </button>

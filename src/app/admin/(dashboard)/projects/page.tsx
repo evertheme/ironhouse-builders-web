@@ -25,7 +25,7 @@ export default async function AdminProjectsPage() {
           {tableReady ? (
             <Link
               href="/admin/projects/new"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 text-sm"
+              className="btn-primary inline-flex items-center justify-center px-4 py-2 text-sm"
             >
               Add project
             </Link>

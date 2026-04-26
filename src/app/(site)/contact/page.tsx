@@ -31,9 +31,9 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-12 h-12 bg-brand-dark/10 rounded-lg flex items-center justify-center">
                     <svg
-                      className="w-6 h-6 text-blue-600"
+                      className="w-6 h-6 text-brand-dark"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -50,7 +50,7 @@ export default function ContactPage() {
                     <h3 className="text-lg font-semibold mb-1">Email</h3>
                     <a
                       href="mailto:info@ironhousebuilders.com"
-                      className="text-gray-600 hover:text-blue-600 transition-colors"
+                      className="text-gray-600 hover:text-brand-dark transition-colors"
                     >
                       info@ironhousebuilders.com
                     </a>
@@ -58,9 +58,9 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-12 h-12 bg-brand-dark/10 rounded-lg flex items-center justify-center">
                     <svg
-                      className="w-6 h-6 text-blue-600"
+                      className="w-6 h-6 text-brand-dark"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -77,7 +77,7 @@ export default function ContactPage() {
                     <h3 className="text-lg font-semibold mb-1">Phone</h3>
                     <a
                       href="tel:+15551234567"
-                      className="text-gray-600 hover:text-blue-600 transition-colors"
+                      className="text-gray-600 hover:text-brand-dark transition-colors"
                     >
                       (555) 123-4567
                     </a>
