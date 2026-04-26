@@ -21,3 +21,11 @@ export function getSupabaseAnonKey(): string | undefined {
   }
   return undefined;
 }
+
+/** Server-only. Never expose via `NEXT_PUBLIC_*`. */
+export function getSupabaseServiceRoleKey(): string | undefined {
+  if (typeof window !== "undefined") {
+    return undefined;
+  }
+  return process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+}

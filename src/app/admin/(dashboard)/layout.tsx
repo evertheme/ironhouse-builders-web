@@ -18,6 +18,12 @@ export default function AdminDashboardLayout({
               Projects
             </Link>
             <Link
+              href="/admin/contact-messages"
+              className="font-semibold text-slate-900 hover:text-blue-600"
+            >
+              Contact messages
+            </Link>
+            <Link
               href="/admin/projects/new"
               className="text-sm text-slate-600 hover:text-blue-600"
             >

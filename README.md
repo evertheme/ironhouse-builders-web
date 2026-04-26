@@ -1,5 +1,24 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment variables
+
+Create `.env.local` with:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes (public site + admin) | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes for contact form | Service role key (server only). Used to insert contact submissions and to list Auth users for email notifications. Never expose to the client. |
+| `RESEND_API_KEY` | For contact emails | [Resend](https://resend.com) API key (server only) |
+| `CONTACT_NOTIFICATION_FROM` | For contact emails | Verified sender, e.g. `Iron House <onboarding@resend.dev>` in development or your domain in production |
+| `CONTACT_NOTIFICATION_TO` | Recommended | Comma-separated addresses merged with Supabase Auth user emails. **With Resend’s test sender (`onboarding@resend.dev`), delivery is often limited**—set this to an address Resend allows (e.g. your Resend account email) so notifications arrive. |
+
+**Resend:** Free tier includes 3,000 emails/month and a 100 emails/day cap (see [pricing](https://resend.com/pricing)). Install is `npm install resend` (already in this repo). Verify your domain in production before using a custom `From` address.
+
+**Contact messages table:** Run `supabase/migrations/20250426120000_contact_messages.sql` in the Supabase SQL editor (or via CLI) so the contact API and admin inbox can persist rows.
+
+**Contact email not arriving:** Confirm `RESEND_API_KEY` and `CONTACT_NOTIFICATION_FROM` are set on the server (e.g. Vercel env). Submit the form again and check the deployment logs for lines starting with `[contact]` (`no_api_key`, `no_recipients`, `Resend error`, or `listUsers failed`). If the DB row is created but mail never arrives, `no_recipients` or Resend rejecting `to` addresses is the usual cause—use `CONTACT_NOTIFICATION_TO` and/or a verified domain.
+
 ## Getting Started
 
 First, run the development server:

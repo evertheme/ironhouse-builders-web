@@ -17,15 +17,33 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus("idle");
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          message: formData.message,
+        }),
+      });
+
+      if (!res.ok) {
+        setSubmitStatus("error");
+        return;
+      }
+
       setSubmitStatus("success");
       setFormData({ name: "", email: "", phone: "", message: "" });
-
       setTimeout(() => setSubmitStatus("idle"), 5000);
-    }, 1000);
+    } catch {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
