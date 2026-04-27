@@ -18,8 +18,24 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
             <ul className="space-y-2 text-white/70">
-              <li>Email: info@ironhousebuilders.com</li>
-              <li>Phone: (555) 123-4567</li>
+              <li>
+                Email:{" "}
+                <a
+                  href="mailto:info@ironhousebuilders.com"
+                  className="text-white/90 hover:text-white underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/50 rounded-sm"
+                >
+                  info@ironhousebuilders.com
+                </a>
+              </li>
+              <li>
+                Phone:{" "}
+                <a
+                  href="tel:+17735476502"
+                  className="text-white/90 hover:text-white underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/50 rounded-sm"
+                >
+                  (773) 547-6502
+                </a>
+              </li>
             </ul>
           </div>
         </div>

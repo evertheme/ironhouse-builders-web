@@ -79,7 +79,7 @@ export default function ContactPage() {
                       href="tel:+15551234567"
                       className="text-gray-600 hover:text-brand-dark transition-colors"
                     >
-                      (555) 123-4567
+                      (773) 547-6502
                     </a>
                   </div>
                 </div>
