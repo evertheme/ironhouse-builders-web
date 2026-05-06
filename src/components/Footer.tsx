@@ -21,10 +21,10 @@ export default function Footer() {
               <li>
                 Email:{" "}
                 <a
-                  href="mailto:info@ironhousebuilders.com"
+                  href="mailto:ironhousebuilders@gmail.com"
                   className="text-white/90 hover:text-white underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/50 rounded-sm"
                 >
-                  info@ironhousebuilders.com
+                  ironhousebuilders@gmail.com
                 </a>
               </li>
               <li>

@@ -4,10 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import {
   PROJECT_IMAGES_BUCKET,
   sanitizeSlugForStorage,
+  slugFromProjectTitle,
 } from "@/lib/supabase/project-images";
 import { SEED_PROJECTS } from "@/lib/project-seed-data";
 import { getAllProjectRows } from "@/lib/projects-db";
 import type { Project } from "@/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -38,11 +40,48 @@ function lines(text: string): string[] {
     .filter(Boolean);
 }
 
-function parseFormToPayload(
-  formData: FormData,
-  sortOrder: number,
-): Record<string, unknown> {
-  const slug = String(formData.get("slug") ?? "").trim();
+async function ensureUniqueProjectSlug(
+  supabase: SupabaseClient,
+  base: string,
+  excludeId?: string,
+): Promise<string> {
+  let candidate = base;
+  let n = 2;
+  for (;;) {
+    const { data, error } = await supabase
+      .from("projects")
+      .select("id")
+      .eq("slug", candidate)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (!data) {
+      return candidate;
+    }
+    if (excludeId && data.id === excludeId) {
+      return candidate;
+    }
+    candidate = `${base}-${n}`;
+    n += 1;
+  }
+}
+
+type ProjectFormFields = {
+  sort_order: number;
+  title: string;
+  address: string;
+  description: string;
+  thumbnail: string;
+  year: number;
+  status: Project["status"];
+  images: string[];
+  features: string[];
+  specs: Project["specs"];
+};
+
+function parseFormFields(formData: FormData, sortOrder: number): ProjectFormFields {
   const title = String(formData.get("title") ?? "").trim();
   const address = String(formData.get("address") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
@@ -50,8 +89,8 @@ function parseFormToPayload(
   const year = Number(formData.get("year"));
   const status = String(formData.get("status") ?? "completed").trim();
 
-  if (!slug || !title || !address || !description || !thumbnail) {
-    throw new Error("Slug, title, address, description, and thumbnail are required.");
+  if (!title || !address || !description || !thumbnail) {
+    throw new Error("Title, address, description, and thumbnail are required.");
   }
   if (!Number.isFinite(year)) {
     throw new Error("Year must be a number.");
@@ -92,16 +131,30 @@ function parseFormToPayload(
 
   return {
     sort_order: sortOrder,
-    slug,
     title,
     address,
     description,
     thumbnail,
     year,
-    status,
+    status: status as Project["status"],
     images,
     features,
     specs,
+  };
+}
+
+async function buildProjectPayload(
+  supabase: SupabaseClient,
+  formData: FormData,
+  sortOrder: number,
+  options: { excludeId?: string } = {},
+): Promise<Record<string, unknown>> {
+  const fields = parseFormFields(formData, sortOrder);
+  const base = slugFromProjectTitle(fields.title);
+  const slug = await ensureUniqueProjectSlug(supabase, base, options.excludeId);
+  return {
+    ...fields,
+    slug,
   };
 }
 
@@ -117,7 +170,7 @@ export async function createProject(
     const maxOrder = rows.length
       ? Math.max(...rows.map((r) => r.sort_order))
       : -1;
-    payload = parseFormToPayload(formData, maxOrder + 1);
+    payload = await buildProjectPayload(supabase, formData, maxOrder + 1);
   } catch (e) {
     const message = e instanceof Error ? e.message : "Something went wrong.";
     return { error: message };
@@ -145,7 +198,7 @@ export async function updateProject(
 
   const { data: existing, error: fetchErr } = await supabase
     .from("projects")
-    .select("sort_order")
+    .select("sort_order, slug")
     .eq("id", id)
     .maybeSingle();
 
@@ -153,11 +206,16 @@ export async function updateProject(
     return { error: fetchErr?.message ?? "Project not found." };
   }
 
+  const previousSlug =
+    typeof existing.slug === "string" ? existing.slug : "";
+
   let payload: Record<string, unknown>;
   try {
     const sortOrder =
       typeof existing.sort_order === "number" ? existing.sort_order : 0;
-    payload = parseFormToPayload(formData, sortOrder);
+    payload = await buildProjectPayload(supabase, formData, sortOrder, {
+      excludeId: id,
+    });
     delete (payload as { sort_order?: number }).sort_order;
   } catch (e) {
     const message = e instanceof Error ? e.message : "Something went wrong.";
@@ -171,6 +229,9 @@ export async function updateProject(
   }
   const slug = String(payload.slug);
   revalidateProjectPaths(slug);
+  if (previousSlug && previousSlug !== slug) {
+    revalidatePath(`/projects/${previousSlug}`);
+  }
   revalidatePath("/admin/projects");
   redirect("/admin/projects");
 }

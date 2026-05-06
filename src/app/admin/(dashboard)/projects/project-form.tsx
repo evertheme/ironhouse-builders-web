@@ -13,7 +13,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
   const action = isEdit ? updateProject : createProject;
   const [state, formAction, pending] = useActionState(action, null);
 
-  const [slug, setSlug] = useState(project?.slug ?? "");
+  const [title, setTitle] = useState(project?.title ?? "");
   const [thumbnail, setThumbnail] = useState(project?.thumbnail ?? "");
   const [imagesText, setImagesText] = useState(
     project?.images?.join("\n") ?? "",
@@ -28,7 +28,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
     setUploadError(null);
     const fd = new FormData();
     fd.set("file", file);
-    fd.set("slug", slug);
+    fd.set("slug", sanitizeSlugForStorage(title));
     const res = await uploadProjectImage(fd);
     if (!res.ok) {
       setUploadError(res.error);
@@ -68,7 +68,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
     }
   }
 
-  const folderHint = sanitizeSlugForStorage(slug) || "draft";
+  const folderHint = sanitizeSlugForStorage(title) || "draft";
 
   return (
     <form action={formAction} className="max-w-3xl space-y-6">
@@ -90,31 +90,26 @@ export default function ProjectForm({ project }: { project?: Project }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-slate-700 mb-1">
-            Slug (URL)
-          </label>
-          <input
-            name="slug"
-            required
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            placeholder="ridgecrest-residence"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-          />
-          <p className="mt-1 text-xs text-slate-500">
-            Uploaded files are stored under{" "}
-            <code className="rounded bg-slate-100 px-1">project-images/{folderHint}/</code>
-          </p>
-        </div>
-        <div className="sm:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1">
             Title
           </label>
           <input
             name="title"
             required
-            defaultValue={project?.title}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
           />
+          <p className="mt-1 text-xs text-slate-500">
+            Public URL:{" "}
+            <code className="rounded bg-slate-100 px-1">
+              /projects/{folderHint}
+            </code>{" "}
+            (generated from the title; a number is added if that path is already
+            in use). Uploads use{" "}
+            <code className="rounded bg-slate-100 px-1">
+              project-images/{folderHint}/
+            </code>
+          </p>
         </div>
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-slate-700 mb-1">

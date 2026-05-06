@@ -49,10 +49,10 @@ export default function ContactPage() {
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold mb-1">Email</h3>
                     <a
-                      href="mailto:info@ironhousebuilders.com"
+                      href="mailto:ironhousebuilders@gmail.com"
                       className="text-gray-600 hover:text-brand-dark transition-colors"
                     >
-                      info@ironhousebuilders.com
+                      ironhousebuilders@gmail.com
                     </a>
                   </div>
                 </div>
