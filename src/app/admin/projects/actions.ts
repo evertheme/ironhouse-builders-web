@@ -6,7 +6,6 @@ import {
   sanitizeSlugForStorage,
   slugFromProjectTitle,
 } from "@/lib/supabase/project-images";
-import { SEED_PROJECTS } from "@/lib/project-seed-data";
 import { getAllProjectRows } from "@/lib/projects-db";
 import type { Project } from "@/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -243,35 +242,6 @@ export async function deleteProject(id: string) {
     throw new Error(error.message);
   }
   revalidateProjectPaths();
-  revalidatePath("/admin/projects");
-  redirect("/admin/projects");
-}
-
-export async function seedDefaultProjects(formData: FormData) {
-  void formData;
-  const { supabase } = await requireUser();
-  const upserts = SEED_PROJECTS.map((p, i) => ({
-    sort_order: i,
-    slug: p.slug,
-    title: p.title,
-    address: p.address,
-    description: p.description,
-    thumbnail: p.thumbnail,
-    year: p.year,
-    status: p.status,
-    images: p.images,
-    features: p.features,
-    specs: p.specs,
-  }));
-
-  const { error } = await supabase.from("projects").upsert(upserts, {
-    onConflict: "slug",
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-  SEED_PROJECTS.forEach((p) => revalidateProjectPaths(p.slug));
   revalidatePath("/admin/projects");
   redirect("/admin/projects");
 }

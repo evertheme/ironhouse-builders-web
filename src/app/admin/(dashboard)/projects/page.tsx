@@ -1,5 +1,4 @@
 import AdminProjectsSortableTable from "./admin-projects-sortable-table";
-import { seedDefaultProjects } from "@/app/admin/projects/actions";
 import ProjectsDbNotice from "./projects-db-notice";
 import { getAdminProjectsBootstrap } from "@/lib/projects";
 import Link from "next/link";
@@ -34,15 +33,6 @@ export default async function AdminProjectsPage() {
               Add project
             </span>
           )}
-          <form action={seedDefaultProjects}>
-            <button
-              type="submit"
-              disabled={!tableReady}
-              className="rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none text-slate-800 font-medium px-4 py-2 text-sm"
-            >
-              Seed default projects
-            </button>
-          </form>
         </div>
       </div>
 
@@ -56,8 +46,7 @@ export default async function AdminProjectsPage() {
             <>
               <p className="text-slate-600 mb-4">No projects yet.</p>
               <p className="text-sm text-slate-500">
-                Run <strong>Seed default projects</strong> to load the three sample
-                homes, or add a project manually.
+                Add a project to get started.
               </p>
             </>
           )}
