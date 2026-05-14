@@ -12,9 +12,43 @@ const cardo = Cardo({
 });
 
 export const metadata: Metadata = {
-  title: "IronHouse Builders",
+  metadataBase: new URL("https://ironhousebuilders.com"),
+  title: {
+    default: "IronHouse Builders | Chicago Custom Home Builder",
+    template: "%s | IronHouse Builders",
+  },
   description:
-    "Building exceptional homes with quality craftsmanship and attention to detail.",
+    "Chicago-area custom home builder specializing in new construction, complete remodeling, additions, garages, roofing, and premium siding. Quality craftsmanship since day one.",
+  openGraph: {
+    type: "website",
+    siteName: "IronHouse Builders",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+};
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "IronHouse Builders",
+  url: "https://ironhousebuilders.com",
+  email: "ironhousebuilders@gmail.com",
+  telephone: "+17735476502",
+  areaServed: {
+    "@type": "City",
+    name: "Chicago",
+    sameAs: "https://www.wikidata.org/wiki/Q1297",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Chicago",
+    addressRegion: "IL",
+    addressCountry: "US",
+  },
+  description:
+    "Chicago-area custom home builder specializing in new construction, complete remodeling, additions, garages, roofing, and premium siding.",
 };
 
 export default function RootLayout({
@@ -24,7 +58,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cardo.variable}>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

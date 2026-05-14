@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProjectBySlug, getAllProjectSlugs } from "@/lib/projects";
 import ProjectGallery from "@/components/ProjectGallery";
@@ -5,6 +6,32 @@ import Link from "next/link";
 
 export const dynamicParams = true;
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ "project-name": string }>;
+}): Promise<Metadata> {
+  const { "project-name": slug } = await params;
+  const project = await getProjectBySlug(slug);
+  if (!project) return {};
+  return {
+    title: project.title,
+    description: project.description,
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      url: `https://ironhousebuilders.com/projects/${slug}`,
+      images: [{ url: project.thumbnail, alt: project.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: project.description,
+      images: [project.thumbnail],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   const slugs = await getAllProjectSlugs();
