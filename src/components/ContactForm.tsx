@@ -26,6 +26,7 @@ export default function ContactForm() {
     email: "",
     phone: "",
     message: "",
+    botid: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
@@ -72,6 +73,7 @@ export default function ContactForm() {
               ? formatUsPhoneMask(formData.phone)
               : null,
           message: formData.message,
+          botid: formData.botid,
         }),
       });
 
@@ -85,7 +87,7 @@ export default function ContactForm() {
       setSessionSubmissionCount(nextCount);
 
       setSubmitStatus("success");
-      setFormData({ name: "", email: "", phone: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", message: "", botid: "" });
       setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch {
       setSubmitStatus("error");
@@ -195,6 +197,20 @@ export default function ContactForm() {
           value={formData.message}
           onChange={handleChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-dark focus:border-transparent outline-none transition resize-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+        />
+      </div>
+
+      {/* Honeypot: hidden from real users; bots fill it in and get silently rejected */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
+        <label htmlFor="botid">Leave this field blank</label>
+        <input
+          type="text"
+          id="botid"
+          name="botid"
+          tabIndex={-1}
+          autoComplete="off"
+          value={formData.botid}
+          onChange={handleChange}
         />
       </div>
 

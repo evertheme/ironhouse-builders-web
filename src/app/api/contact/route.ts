@@ -25,6 +25,12 @@ export async function POST(request: Request) {
   }
 
   const b = body as Record<string, unknown>;
+
+  const botid = String(b.botid ?? "").trim();
+  if (botid) {
+    return Response.json({ ok: true });
+  }
+
   const name = String(b.name ?? "").trim();
   const email = String(b.email ?? "").trim();
   const phoneRaw = b.phone != null && b.phone !== "" ? String(b.phone).trim() : "";
